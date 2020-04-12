@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <!-- 这里需要使用一个面包屑 -->
+    <div style="text-align: left">
+      <span>我的项目 / ppm-jt-web@1.1.50(2020-5-25)</span>
     </div>
     <router-view/>
   </div>
@@ -13,7 +13,6 @@
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
 }
 

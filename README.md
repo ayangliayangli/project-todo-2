@@ -1,5 +1,36 @@
 # project-todo-2
 
+# data
+ * project
+   * id
+   * version
+   * name
+   * subName
+   * pressTime
+   * desc
+   * env
+     * stg
+     * testAccount
+     * testAccountPwd
+   * urls
+     * {url, desc}
+   * createdTime
+   * updatedTime
+ * todo
+   * id
+   * projectId
+   * type -- feat bug style optimize rebuild
+   * title
+   * desc
+   * status -- new dev test check
+   * createdTime
+   * updateTIme
+   * logs
+     * title
+     * desc
+     * createdTime
+     * updatedTime
+
 ## Project setup
 ```
 yarn install
