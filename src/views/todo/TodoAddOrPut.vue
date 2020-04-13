@@ -35,7 +35,7 @@
       </el-row>
 
       <el-row>
-        <el-col :span="12">
+        <el-col :span="24">
           <el-form-item label="描述">
             <el-input
               v-model="formModel.desc"

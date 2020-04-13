@@ -1,5 +1,11 @@
 <template>
   <div>
+    <div class="g--margin-5">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item :to="{ path: '/' }">我的项目</el-breadcrumb-item>
+        <el-breadcrumb-item>{{ projectBaseInfo }}</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
     <h1>{{ pageTitle }}</h1>
     <!-- 顶部按钮 -->
     <div class="g--display-flex">
@@ -72,9 +78,19 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="urls">
-                <el-input v-for="(url, index) of formModel.urls" :key="index" v-model="formModel.urls[index].url" placeholder="url">
-                  <el-input slot="prepend" v-model="formModel.urls[index].desc" placeholder="url描述" style="width: 200px"></el-input>
-                </el-input>
+                <el-button type="text" @click="handleClickAddUrl">add</el-button>
+                <div v-for="(url, index) of formModel.urls" :key="index">
+                  <el-row>
+                    <el-col :span="20">
+                      <el-input v-model="formModel.urls[index].url" placeholder="url">
+                        <el-input slot="prepend" v-model="formModel.urls[index].desc" placeholder="url描述" style="width: 200px"></el-input>
+                      </el-input>
+                    </el-col>
+                    <el-col :span="4">
+                      <el-button type="text" @click="handleClickDelUrl(index)">del</el-button>
+                    </el-col>
+                  </el-row>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -242,6 +258,9 @@ export default {
     }
   },
   computed: {
+    projectBaseInfo () {
+      return `${this.formModel.subName}@${this.formModel.version}`
+    },
     isAddOrPut () {
       return this.mode === 'add' || this.mode === 'put'
     },
@@ -260,6 +279,16 @@ export default {
   },
   watch: {},
   methods: {
+    handleClickAddUrl () {
+      this.formModel.urls.push({
+        url: '',
+        desc: ''
+      })
+    },
+    handleClickDelUrl (index) {
+      const urls = this.formModel.urls
+      this.formModel.urls = urls.filter((url, _index) => _index !== index)
+    },
     getTodoStatistics (todos) {
       const ret = {
         feat: [0, 0],

@@ -11,29 +11,32 @@
       <el-option v-for="status of todoStatusOptions" :key="status.value" :label="status.label" :value="status.value"></el-option>
     </el-select>
     <el-table :data="tableData" stripe style="width: 100%" @row-dblclick="handleRowDbClickTodoList">
-      <el-table-column label="类型" prop="type">
+      <el-table-column label="类型" prop="type" width="100">
         <template slot-scope="scope">
           {{ scope.row.type | todoTypeFilter }}
         </template>
       </el-table-column>
-      <el-table-column label="标题" prop="title"></el-table-column>
-      <el-table-column label="状态" prop="status">
+      <el-table-column label="状态" prop="status" width="100">
         <div slot="header">状态</div>
         <template slot-scope="scope">
           {{ scope.row.status | todoStatusFilter }}
+        </template>
+      </el-table-column>
+      <el-table-column label="标题" prop="title">
+        <template slot-scope="scope">
+          <el-button type="text" @click="handleClickTodoDetailBtn(scope.row)">{{ scope.row.title }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="创建世间" prop="createdTime"></el-table-column>
       <el-table-column label="更新时间" prop="updatedTime"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button type="text" @click="handleClickTodoDetailBtn(scope.row)">详情</el-button>
           <el-button type="text" @click="handleClickDeleteTodo(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 抽屉 -->
+    <!-- 抽屉: todo detail -->
     <el-drawer
       title="TODO 详情"
       direction="rtl"
@@ -155,9 +158,15 @@ export default {
       this.activeTodo = row
       this.isShowTodoDetail = true
     },
-    async handleClickDeleteTodo (row) {
-      await this.$db.delete('todo', row.id)
-      this.flushTodo()
+    handleClickDeleteTodo (row) {
+      this.$confirm('are you sure delete ?', 'tip', {
+        confirmButtonText: 'confirm',
+        cancelButtonText: 'cancel',
+        type: 'warning'
+      }).then(async () => {
+        await this.$db.delete('todo', row.id)
+        this.flushTodo()
+      }).catch(() => {})
     },
     handleRowDbClickTodoList (val, oldVal) {
       this.mode = 'put'
@@ -165,7 +174,8 @@ export default {
       this.isShowTodoDetail = true
     },
     async flushTodo () {
-      const todos = await this.$db.getAllFromIndex('todo', 'projectId')
+      const todos = await this.$db.getAllFromIndex('todo', 'projectId', this.projectId)
+      console.log('===todos:', todos)
       this.tableData = todos
       this.tableDataDeepCopy = JSON.stringify(todos)
     },

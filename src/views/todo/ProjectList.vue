@@ -1,19 +1,32 @@
 <template>
   <div class="about">
-    <el-button @click="handleClickOpenDb">open idb</el-button>
-    <el-button @click="handleClickAddData">add</el-button>
-    <el-button>put</el-button>
-    <el-button>get</el-button>
-    <el-button>delete</el-button>
-    <el-button @click="handleClickGetAll">getAll</el-button>
-    <el-button @click="handleClickGetFromIndex">getFromIndex</el-button>
-    <el-button @click="handleClickClear">Thanos-enhance</el-button>
+    <div class="g--margin-5">
+      <el-breadcrumb separator="/">
+        <el-breadcrumb-item>我的项目</el-breadcrumb-item>
+      </el-breadcrumb>
+    </div>
+
+    <div class="g--margin-5">
+      <el-button @click="handleClickOpenDb">open idb</el-button>
+      <el-button @click="handleClickAddData">add</el-button>
+      <el-button>put</el-button>
+      <el-button>get</el-button>
+      <el-button>delete</el-button>
+      <el-button @click="handleClickGetAll">getAll</el-button>
+      <el-button @click="handleClickGetFromIndex">getFromIndex</el-button>
+      <el-button @click="handleClickClear">Thanos-enhance</el-button>
+    </div>
+
     <div>
       <el-table :data="tableData" stripe style="width: 100%" @row-dbclick="handleClickDesc">
-        <el-table-column prop="id" label="id" width="180"></el-table-column>
-        <el-table-column prop="name" label="工程" width="180"></el-table-column>
-        <el-table-column prop="version" label="版本" width="180"></el-table-column>
-        <el-table-column prop="subName" label="子工程"></el-table-column>
+        <el-table-column prop="name" label="工程" width="100"></el-table-column>
+        <el-table-column label="简短描述" width="200">
+          <template slot-scope="scope">
+            <el-button type="text" @click="handleClickDesc(scope.row)">
+              {{ `${scope.row.subName}@${scope.row.version}` }}
+            </el-button>
+          </template>
+        </el-table-column>
         <el-table-column prop="pressTime" label="发布时间">
           <template slot-scope="scope">
             {{ scope.row.pressTime |  dateShowFilter }}
@@ -36,7 +49,6 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" @click="handleClickDesc(scope.row)">详情</el-button>
             <el-button type="text" @click="handleClickPut(scope.row)">编辑</el-button>
             <el-button type="text" @click="handleClickDelete(scope.row)">删除</el-button>
           </template>
@@ -110,9 +122,11 @@ export default {
         }
 
         if (this.handlingTodoArr.indexOf(todo.status) !== -1) {
-          ret[todoTypeLiteral][0]++
+          // 处理中
           ret[todoTypeLiteral][1]++
         } else {
+          // 已经完成
+          ret[todoTypeLiteral][0]++
           ret[todoTypeLiteral][1]++
         }
       })
@@ -135,9 +149,15 @@ export default {
       this.tableData = await Promise.all(dataFinalPromise)
       console.log(data)
     },
-    async handleClickDelete (row) {
-      await this.$db.delete('projectBaseInfo', row.id)
-      this.handleClickGetAll()
+    handleClickDelete (row) {
+      this.$confirm('确认删除吗', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        await this.$db.delete('projectBaseInfo', row.id)
+        this.handleClickGetAll()
+      }).catch(() => {})
     },
     async handleClickClear () {
       await this.$db.clear('projectBaseInfo')
