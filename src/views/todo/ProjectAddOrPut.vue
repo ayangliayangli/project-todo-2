@@ -117,7 +117,12 @@
           }"
           @click="handleClickShowBasicCardToogle"
           ></i>
-          <span v-for="([name, value], index) of Object.entries(todoStatistics)" :key="index" class="g--margin-0-5">{{ `${name}:${value[0]}/${value[1]}` }}</span>
+          <span v-for="([name, value], index) of Object.entries(todoStatistics)" :key="index" class="g--margin-0-5">
+            <span>{{name}}: </span>
+            <span :class="{'g--color-red': value[2] > 0}">{{ value[2] }} / </span>
+            <span>{{ value[0] }} / </span>
+            <span>{{ value[1] }}</span>
+          </span>
         </div>
         <!-- project base info -->
         <div v-if="isShowProjectBasic">
@@ -291,13 +296,13 @@ export default {
     },
     getTodoStatistics (todos) {
       const ret = {
-        feat: [0, 0],
-        bug: [0, 0],
-        default: [0, 0]
+        feat: [0, 0, 0],
+        bug: [0, 0, 0],
+        other: [0, 0, 0]
       }
 
       todos.forEach(todo => {
-        let todoTypeLiteral = 'default'
+        let todoTypeLiteral = 'other'
         if (+todo.type === +TODO_TYPE_ENUM.feat) {
           todoTypeLiteral = 'feat'
         } else if (+todo.type === +TODO_TYPE_ENUM.bug) {
@@ -305,7 +310,11 @@ export default {
         }
 
         if (this.handlingTodoArr.indexOf(+todo.status) === -1) {
+          // 已经完成
           ret[todoTypeLiteral][0]++
+        } else {
+          // 未完成
+          ret[todoTypeLiteral][2]++
         }
 
         ret[todoTypeLiteral][1]++

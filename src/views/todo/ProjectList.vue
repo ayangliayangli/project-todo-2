@@ -33,13 +33,24 @@
           </template>
         </el-table-column>
         <el-table-column prop="bugCount" label="缺陷数量">
+          <div slot="header">
+            <p>bugs(todo/done/total)</p>
+          </div>
           <template slot-scope="scope">
+            <span :class="{'g--color-red': scope.row.statistics.bug[2] > 0}">{{ scope.row.statistics.bug[2] }} / </span>
             {{ scope.row.statistics.bug[0] }} / {{ scope.row.statistics.bug[1] }}
           </template>
         </el-table-column>
-        <el-table-column prop="featCount" label="特性数量">
+        <el-table-column prop="featCount" label="feat(todo/done/total)">
           <template slot-scope="scope">
+            <span :class="{'g--color-red': scope.row.statistics.feat[2] > 0}">{{ scope.row.statistics.feat[2] }} / </span>
             {{ scope.row.statistics.feat[0] }} / {{ scope.row.statistics.feat[1] }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="featCount" label="other(todo/done/total)">
+          <template slot-scope="scope">
+            <span :class="{'g--color-red': scope.row.statistics.default[2] > 0}">{{ scope.row.statistics.default[2] }} / </span>
+            {{ scope.row.statistics.default[0] }} / {{ scope.row.statistics.default[1] }}
           </template>
         </el-table-column>
         <el-table-column prop="status" label="状态">
@@ -108,9 +119,9 @@ export default {
     },
     getTodoStatistics (todos) {
       const ret = {
-        feat: [0, 0],
-        bug: [0, 0],
-        default: [0, 0]
+        feat: [0, 0, 0], // 已完成 合计 未完成
+        bug: [0, 0, 0],
+        default: [0, 0, 0]
       }
 
       todos.forEach(todo => {
@@ -121,8 +132,9 @@ export default {
           todoTypeLiteral = 'bug'
         }
 
-        if (this.handlingTodoArr.indexOf(todo.status) !== -1) {
+        if (this.handlingTodoArr.indexOf(+todo.status) !== -1) {
           // 处理中
+          ret[todoTypeLiteral][2]++
           ret[todoTypeLiteral][1]++
         } else {
           // 已经完成
@@ -172,6 +184,9 @@ export default {
     }
   },
   created () {
+    this.handleClickGetAll()
+  },
+  beforeUpdate () {
     this.handleClickGetAll()
   }
 }
