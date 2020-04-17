@@ -25,6 +25,29 @@ export function throwtleWrapper () {
 }
 
 /**
+ * 生成一个get函数， 获取到的永远是同一个对象
+ * @param {any} target
+ */
+export function getSingleFun (target) {
+  let targetInner = target
+  return function () {
+    if (!targetInner) {
+      targetInner = target
+    }
+
+    return targetInner
+  }
+}
+
+/**
+ * 生成一个函数， 会根据参数做计算缓存
+ * @param {Function} callback 要执行的函数
+ */
+export function cacheFn (callback) {
+
+}
+
+/**
  * 下载指定blob, 使用指定的下载名字
  * @param {Blob} blob target blob
  * @param {String} fileName fileName
