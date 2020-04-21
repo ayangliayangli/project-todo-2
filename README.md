@@ -1,5 +1,9 @@
 # project-todo-2
 
+# 概述
+* 赶时间写的代码， 有大量地方待优化
+* idb 本地存储数据是零时方案，后面使用 eggjs mysql 对接在线版本
+
 # data
  * project
    * id
